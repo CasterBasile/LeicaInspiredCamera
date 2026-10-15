@@ -2,6 +2,7 @@ package com.leicacamera.app.ui
 
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.view.ViewGroup
 import androidx.camera.core.ImageCapture
 import androidx.camera.view.PreviewView
@@ -64,8 +65,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
@@ -176,7 +177,11 @@ fun CameraScreen(viewModel: CameraViewModel) {
                     modifier = Modifier
                         .fillMaxSize()
                         .graphicsLayer {
-                            colorFilter = ColorFilter.colorMatrix(composeColorMatrix)
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                renderEffect = android.graphics.RenderEffect.createColorFilterEffect(
+                                    android.graphics.ColorMatrixColorFilter(composeColorMatrix)
+                                ).asComposeRenderEffect()
+                            }
                         }
                 )
 
@@ -193,7 +198,7 @@ fun CameraScreen(viewModel: CameraViewModel) {
                                         Color.Transparent,
                                         Color.Black.copy(alpha = state.selectedFilter.vignetteStrength * 0.85f)
                                     ),
-                                    radius = this.size.maxDimension * 0.72f
+                                    radius = size.maxDimension * 0.72f
                                 )
                             )
                         }
@@ -565,7 +570,11 @@ private fun FilterPreviewSwatch(
                 shape = CircleShape
             )
             .graphicsLayer {
-                colorFilter = ColorFilter.colorMatrix(matrix)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    renderEffect = android.graphics.RenderEffect.createColorFilterEffect(
+                        android.graphics.ColorMatrixColorFilter(matrix)
+                    ).asComposeRenderEffect()
+                }
             }
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
@@ -578,7 +587,7 @@ private fun FilterPreviewSwatch(
                         Color(0xFF1F2421)
                     ),
                     start = Offset.Zero,
-                    end = Offset(this.size.width, this.size.height)
+                    end = Offset(size.width, size.height)
                 )
             )
         }
@@ -742,16 +751,16 @@ private fun FramingGridOverlay() {
         val strokeWidth = 0.75.dp.toPx()
         val lineColor = Color.White.copy(alpha = 0.22f)
 
-        val thirdW = this.size.width / 3f
-        val thirdH = this.size.height / 3f
+        val thirdW = size.width / 3f
+        val thirdH = size.height / 3f
 
-        drawLine(lineColor, Offset(thirdW, 0f), Offset(thirdW, this.size.height), strokeWidth)
-        drawLine(lineColor, Offset(thirdW * 2, 0f), Offset(thirdW * 2, this.size.height), strokeWidth)
-        drawLine(lineColor, Offset(0f, thirdH), Offset(this.size.width, thirdH), strokeWidth)
-        drawLine(lineColor, Offset(0f, thirdH * 2), Offset(this.size.width, thirdH * 2), strokeWidth)
+        drawLine(lineColor, Offset(thirdW, 0f), Offset(thirdW, size.height), strokeWidth)
+        drawLine(lineColor, Offset(thirdW * 2, 0f), Offset(thirdW * 2, size.height), strokeWidth)
+        drawLine(lineColor, Offset(0f, thirdH), Offset(size.width, thirdH), strokeWidth)
+        drawLine(lineColor, Offset(0f, thirdH * 2), Offset(size.width, thirdH * 2), strokeWidth)
 
-        val cx = this.size.width / 2f
-        val cy = this.size.height / 2f
+        val cx = size.width / 2f
+        val cy = size.height / 2f
         val arm = 8.dp.toPx()
         drawLine(lineColor, Offset(cx - arm, cy), Offset(cx + arm, cy), strokeWidth)
         drawLine(lineColor, Offset(cx, cy - arm), Offset(cx, cy + arm), strokeWidth)
