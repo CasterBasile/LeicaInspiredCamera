@@ -68,7 +68,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -161,10 +160,6 @@ fun CameraScreen(viewModel: CameraViewModel) {
                 },
             contentAlignment = Alignment.Center
         ) {
-            val composeColorMatrix = remember(state.selectedFilter) {
-                ColorMatrix(state.selectedFilter.colorMatrixValues)
-            }
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -175,9 +170,6 @@ fun CameraScreen(viewModel: CameraViewModel) {
                     factory = { previewView },
                     modifier = Modifier
                         .fillMaxSize()
-                        .graphicsLayer {
-                            colorFilter = ColorFilter.colorMatrix(composeColorMatrix)
-                        }
                 )
 
                 if (state.selectedFilter.vignetteStrength > 0f || state.selectedFilter.tintOverlayArgb != 0) {
@@ -564,9 +556,6 @@ private fun FilterPreviewSwatch(
                 color = if (isSelected) LeicaRed else LeicaDarkGray,
                 shape = CircleShape
             )
-            .graphicsLayer {
-                colorFilter = ColorFilter.colorMatrix(matrix)
-            }
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             drawRect(
@@ -579,7 +568,8 @@ private fun FilterPreviewSwatch(
                     ),
                     start = Offset.Zero,
                     end = Offset(this.size.width, this.size.height)
-                )
+                ),
+                colorFilter = ColorFilter.colorMatrix(matrix)
             )
         }
     }
