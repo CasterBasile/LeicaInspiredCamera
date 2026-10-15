@@ -193,7 +193,7 @@ fun CameraScreen(viewModel: CameraViewModel) {
                                         Color.Transparent,
                                         Color.Black.copy(alpha = state.selectedFilter.vignetteStrength * 0.85f)
                                     ),
-                                    radius = size.maxDimension * 0.72f
+                                    radius = this.size.maxDimension * 0.72f
                                 )
                             )
                         }
@@ -578,7 +578,7 @@ private fun FilterPreviewSwatch(
                         Color(0xFF1F2421)
                     ),
                     start = Offset.Zero,
-                    end = Offset(size.width, size.height)
+                    end = Offset(this.size.width, this.size.height)
                 )
             )
         }
@@ -742,16 +742,16 @@ private fun FramingGridOverlay() {
         val strokeWidth = 0.75.dp.toPx()
         val lineColor = Color.White.copy(alpha = 0.22f)
 
-        val thirdW = size.width / 3f
-        val thirdH = size.height / 3f
+        val thirdW = this.size.width / 3f
+        val thirdH = this.size.height / 3f
 
-        drawLine(lineColor, Offset(thirdW, 0f), Offset(thirdW, size.height), strokeWidth)
-        drawLine(lineColor, Offset(thirdW * 2, 0f), Offset(thirdW * 2, size.height), strokeWidth)
-        drawLine(lineColor, Offset(0f, thirdH), Offset(size.width, thirdH), strokeWidth)
-        drawLine(lineColor, Offset(0f, thirdH * 2), Offset(size.width, thirdH * 2), strokeWidth)
+        drawLine(lineColor, Offset(thirdW, 0f), Offset(thirdW, this.size.height), strokeWidth)
+        drawLine(lineColor, Offset(thirdW * 2, 0f), Offset(thirdW * 2, this.size.height), strokeWidth)
+        drawLine(lineColor, Offset(0f, thirdH), Offset(this.size.width, thirdH), strokeWidth)
+        drawLine(lineColor, Offset(0f, thirdH * 2), Offset(this.size.width, thirdH * 2), strokeWidth)
 
-        val cx = size.width / 2f
-        val cy = size.height / 2f
+        val cx = this.size.width / 2f
+        val cy = this.size.height / 2f
         val arm = 8.dp.toPx()
         drawLine(lineColor, Offset(cx - arm, cy), Offset(cx + arm, cy), strokeWidth)
         drawLine(lineColor, Offset(cx, cy - arm), Offset(cx, cy + arm), strokeWidth)
