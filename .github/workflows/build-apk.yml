@@ -1,0 +1,34 @@
+name: Build Leica Camera APK
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del codice sorgente
+        uses: actions/checkout@v4
+
+      - name: Configura Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Installa Gradle 8.10.2
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+
+      - name: Compila APK Debug installabile
+        run: gradle assembleDebug --stacktrace
+
+      - name: Pubblica APK per il download
+        uses: actions/upload-artifact@v4
+        with:
+          name: Leica-Inspired-Camera-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
