@@ -1,7 +1,11 @@
 package com.leicacamera.app.ui
 
 import android.graphics.BitmapFactory
+import android.graphics.ColorMatrix as AndroidColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.RenderEffect as AndroidRenderEffect
 import android.net.Uri
+import android.os.Build
 import android.view.ViewGroup
 import androidx.camera.core.ImageCapture
 import androidx.camera.view.PreviewView
@@ -64,9 +68,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -176,7 +180,13 @@ fun CameraScreen(viewModel: CameraViewModel) {
                     modifier = Modifier
                         .fillMaxSize()
                         .graphicsLayer {
-                            colorFilter = ColorFilter.colorMatrix(composeColorMatrix)
+                            renderEffect = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                AndroidRenderEffect.createColorFilterEffect(
+                                    ColorMatrixColorFilter(AndroidColorMatrix(composeColorMatrix.values))
+                                ).asComposeRenderEffect()
+                            } else {
+                                null
+                            }
                         }
                 )
 
@@ -565,7 +575,13 @@ private fun FilterPreviewSwatch(
                 shape = CircleShape
             )
             .graphicsLayer {
-                colorFilter = ColorFilter.colorMatrix(matrix)
+                renderEffect = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    AndroidRenderEffect.createColorFilterEffect(
+                        ColorMatrixColorFilter(AndroidColorMatrix(matrix.values))
+                    ).asComposeRenderEffect()
+                } else {
+                    null
+                }
             }
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
