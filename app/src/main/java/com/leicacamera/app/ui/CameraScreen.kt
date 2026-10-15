@@ -2,7 +2,6 @@ package com.leicacamera.app.ui
 
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Build
 import android.view.ViewGroup
 import androidx.camera.core.ImageCapture
 import androidx.camera.view.PreviewView
@@ -66,7 +65,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorMatrix
-import androidx.compose.ui.graphics.asComposeRenderEffect
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
@@ -162,10 +161,6 @@ fun CameraScreen(viewModel: CameraViewModel) {
                 },
             contentAlignment = Alignment.Center
         ) {
-            val composeColorMatrix = remember(state.selectedFilter) {
-                ColorMatrix(state.selectedFilter.colorMatrixValues)
-            }
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -174,15 +169,7 @@ fun CameraScreen(viewModel: CameraViewModel) {
             ) {
                 AndroidView(
                     factory = { previewView },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .graphicsLayer {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                                renderEffect = android.graphics.RenderEffect.createColorFilterEffect(
-                                    android.graphics.ColorMatrixColorFilter(composeColorMatrix)
-                                ).asComposeRenderEffect()
-                            }
-                        }
+                    modifier = Modifier.fillMaxSize()
                 )
 
                 if (state.selectedFilter.vignetteStrength > 0f || state.selectedFilter.tintOverlayArgb != 0) {
@@ -559,7 +546,6 @@ private fun FilterPreviewSwatch(
     filter: PhotoFilter,
     isSelected: Boolean
 ) {
-    val matrix = remember(filter) { ColorMatrix(filter.colorMatrixValues) }
     Box(
         modifier = Modifier
             .size(48.dp)
@@ -569,13 +555,6 @@ private fun FilterPreviewSwatch(
                 color = if (isSelected) LeicaRed else LeicaDarkGray,
                 shape = CircleShape
             )
-            .graphicsLayer {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    renderEffect = android.graphics.RenderEffect.createColorFilterEffect(
-                        android.graphics.ColorMatrixColorFilter(matrix)
-                    ).asComposeRenderEffect()
-                }
-            }
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             drawRect(
